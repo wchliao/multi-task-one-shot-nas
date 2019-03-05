@@ -1,0 +1,27 @@
+data:
+  batch_size: 128
+
+pretrain:
+  num_epochs: 400
+  lr: 0.1
+  lr_decay: 0.1
+  lr_decay_epoch: [200, 300]
+  momentum: 0.9
+  weight_decay: 0.0001
+  dropout: 0.7
+  save_epoch: 30
+
+controller:
+  num_epochs: 100
+  lr: 0.001
+  baseline_decay: 0.95
+  save_epoch: 100
+
+final:
+  num_epochs: 300
+  lr: 0.1
+  lr_decay: 0.1
+  lr_decay_epoch: [150, 250]
+  momentum: 0.9
+  weight_decay: 0.0001
+  save_epoch: 30

@@ -1,0 +1,6 @@
+- kernel_size: 3
+  expansion: 6
+- kernel_size: 5
+  expansion: 6
+- kernel_size: 3
+  expansion: 3
