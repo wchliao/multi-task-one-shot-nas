@@ -17,7 +17,6 @@ Arguments:
  * `--type`: (default: `1`)
    * `1`: Train a single task single objective NAS agent for task *i* model.
  * `--data`: (default: `1`)
-   * `0`: CIFAR-10 (single task)
    * `1`: CIFAR-100
  * `--task`: Task ID (for type `1`) (default: None) 
  * `--save`: A flag used to decide whether to save model or not.
@@ -37,7 +36,6 @@ Arguments:
  * `--type`: (default: `1`)
    * `1`: Evaluate a single task single objective NAS agent for task *i* model.
  * `--data`: (default: `1`)
-   * `0`: CIFAR-10 (single task)
    * `1`: CIFAR-100
  * `--task`: Task ID (for type `1`) (default: None)
  * `--path`: Path (directory) that model and history are saved. (default: `'saved_models/default/'`)
