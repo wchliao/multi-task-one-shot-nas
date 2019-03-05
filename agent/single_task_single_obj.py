@@ -5,7 +5,7 @@ import os
 import json
 from model import SimpleModel
 from controller import Controller
-from mask_sampler import MaskSampler
+from utils import MaskSampler
 from .base import BaseAgent
 
 
