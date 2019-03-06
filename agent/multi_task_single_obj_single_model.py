@@ -10,7 +10,7 @@ from utils import MaskSampler
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 
 
-class MultiTaskSingleObjectiveSingleControllerAgent(SingleTaskSingleObjectiveAgent):
+class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
     def __init__(self, architecture, search_space, task_info):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.search_size = len(search_space)

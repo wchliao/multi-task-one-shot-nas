@@ -1,2 +1,2 @@
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
-from .multi_task_single_obj_single_controller import MultiTaskSingleObjectiveSingleControllerAgent
+from .multi_task_single_obj_single_model import MultiTaskSingleObjectiveSingleModelAgent
