@@ -3,6 +3,7 @@ import yaml
 from namedtuple import TaskInfo, DataConfigs, PretrainConfigs, ControllerConfigs, FinalModelConfigs, Configs, LayerArguments, OperationArguments
 from data_loader import CIFAR100Loader
 from agent import SingleTaskSingleObjectiveAgent
+from agent import MultiTaskSingleObjectiveSingleControllerAgent
 
 
 def parse_args():
@@ -12,7 +13,8 @@ def parse_args():
     mode.add_argument('--train', action='store_true')
     mode.add_argument('--eval', action='store_true')
 
-    parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n')
+    parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n'
+                                                            '2: Multi-task single objective single controller')
     parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100')
     parser.add_argument('--task', type=int, default=None)
 
@@ -62,7 +64,8 @@ def train(args):
 
     if args.type == 1:
         agent = SingleTaskSingleObjectiveAgent(architecture, search_space, task_info)
-
+    elif args.type == 2:
+        agent = MultiTaskSingleObjectiveSingleControllerAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.setting))
 
@@ -112,7 +115,8 @@ def evaluate(args):
 
     if args.type == 1:
         agent = SingleTaskSingleObjectiveAgent(architecture, search_space, task_info)
-
+    elif args.type == 2:
+        agent = MultiTaskSingleObjectiveSingleControllerAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.setting))
 
