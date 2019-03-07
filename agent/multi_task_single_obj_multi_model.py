@@ -71,7 +71,7 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
             if verbose or save_history:
                 accuracy = []
                 for t in range(self.num_tasks):
-                    masks, _ = self.mask_sampler.sample(sample_best=True, grad=False)
+                    masks, _ = self.mask_sampler.sample(task=t, sample_best=True, grad=False)
                     accuracy.append(self._eval_model(test_data, masks, t))
                 self.accuracy['controller'].append(np.mean(accuracy))
 
@@ -226,3 +226,19 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
 
         for t, model in enumerate(self.finalmodel):
             torch.save(model.state_dict(), os.path.join(path, 'model{}'.format(t)))
+
+
+    def _load_final(self, path='saved_models/default/final/'):
+        try:
+            with open(os.path.join(path, 'masks'), 'r') as f:
+                self.finalmodel_mask = json.load(f)
+            self.finalmodel_mask = torch.tensor(self.finalmodel_mask)
+            self.finalmodel = [self.submodel(masks, t) for t, masks in enumerate(self.finalmodel_mask)]
+            self.finalmodel = [nn.DataParallel(model).to(self.device) for model in self.finalmodel]
+
+            for t, model in enumerate(self.finalmodel):
+                filename = os.path.join(path, 'model{}'.format(t))
+                model.load_state_dict(torch.load(filename))
+
+        except FileNotFoundError:
+            pass
