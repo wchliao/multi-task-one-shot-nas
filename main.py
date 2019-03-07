@@ -14,7 +14,7 @@ def parse_args():
     mode.add_argument('--eval', action='store_true')
 
     parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n'
-                                                            '2: Multi-task single objective single controller')
+                                                            '2: Multi-task single objective single model')
     parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100')
     parser.add_argument('--task', type=int, default=None)
 
