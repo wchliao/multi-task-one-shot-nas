@@ -187,8 +187,7 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
                     ):
 
         if self.finalmodel is None:
-            self.finalmodel_mask, _ = self.mask_sampler.sample(sample_best=True, grad=False)
-            self.finalmodel_mask = self.finalmodel_mask[0]
+            self.finalmodel_mask, _ = self.mask_sampler.sample(sample_best=True, grad=False, batch=False)
             self.finalmodel = self.submodel(self.finalmodel_mask)
             self.finalmodel = nn.DataParallel(self.finalmodel).to(self.device)
 

@@ -8,21 +8,32 @@ class MaskSampler:
         self.device_count = torch.cuda.device_count()
 
 
-    def rand(self):
+    def rand(self, batch=True):
         masks = torch.rand(self.mask_size)
-        return torch.stack([masks for _ in range(self.device_count)])
+
+        if batch:
+            return torch.stack([masks for _ in range(self.device_count)])
+        else:
+            return masks
 
 
-    def ones(self):
+    def ones(self, batch=True):
         masks = torch.ones(self.mask_size)
-        return torch.stack([masks for _ in range(self.device_count)])
+
+        if batch:
+            return torch.stack([masks for _ in range(self.device_count)])
+        else:
+            return masks
 
 
-    def sample(self, task=None, sample_best=False, grad=True):
+    def sample(self, task=None, sample_best=False, grad=True, batch=True):
         if grad:
             masks, log_probs = self.controller.sample(task=task, sample_best=sample_best)
         else:
             with torch.no_grad():
                 masks, log_probs = self.controller.sample(task=task, sample_best=sample_best)
 
-        return torch.stack([masks for _ in range(self.device_count)]), log_probs
+        if batch:
+            masks = torch.stack([masks for _ in range(self.device_count)])
+
+        return masks, log_probs
