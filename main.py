@@ -71,7 +71,7 @@ def train(args):
     elif args.type == 3:
         agent = MultiTaskSingleObjectiveMultiModelAgent(architecture, search_space, task_info)
     else:
-        raise ValueError('Unknown setting: {}'.format(args.setting))
+        raise ValueError('Unknown setting: {}'.format(args.type))
 
     if args.load:
         agent.load(args.path)
@@ -124,7 +124,7 @@ def evaluate(args):
     elif args.type == 3:
         agent = MultiTaskSingleObjectiveMultiModelAgent(architecture, search_space, task_info)
     else:
-        raise ValueError('Unknown setting: {}'.format(args.setting))
+        raise ValueError('Unknown setting: {}'.format(args.type))
 
     agent.load(args.path)
     accuracy = agent.eval(data)
