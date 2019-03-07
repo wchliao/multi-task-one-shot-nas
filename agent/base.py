@@ -8,8 +8,5 @@ class BaseAgent:
     def eval(self, data):
         raise NotImplementedError
 
-    def save(self, path):
-        pass
-
     def load(self, path):
         pass

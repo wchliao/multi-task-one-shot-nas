@@ -273,16 +273,6 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
             return correct / total
 
 
-    def save(self, path='saved_models/default/'):
-        self._save_pretrain(os.path.join(path, 'pretrain'))
-        self._save_controller(os.path.join(path, 'controller'))
-        self._save_final(os.path.join(path, 'final'))
-
-        for key in ['pretrain', 'controller', 'final']:
-            self._save_epoch(key, os.path.join(path, key))
-            self._save_accuracy(key, os.path.join(path, key))
-
-
     def _save_pretrain(self, path='saved_models/default/pretrain/'):
         if not os.path.isdir(path):
             os.makedirs(path)
