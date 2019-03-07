@@ -28,6 +28,9 @@ class Controller(nn.Module):
 
 
     def sample(self, task=None, sample_best=False):
+        if task is not None:
+            task = torch.tensor(task)
+
         outputs = self.forward(task)
         probs = torch.sigmoid(outputs).view(-1)
         dist = torch.distributions.bernoulli.Bernoulli(probs)
