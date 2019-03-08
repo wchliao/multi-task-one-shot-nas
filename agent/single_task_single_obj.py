@@ -5,7 +5,7 @@ import os
 import json
 from model import SimpleModel
 from controller import Controller
-from utils import MaskSampler
+from utils import MaskSampler, SingleModelSize
 from .base import BaseAgent
 
 
@@ -28,6 +28,8 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
         self.finalmodel = None
 
         self.mask_sampler = MaskSampler(mask_size=self.model.mask_size, controller=self.controller)
+        self.compute_model_size = SingleModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes)
+
         self.model = nn.DataParallel(self.model).to(self.device)
 
         self.epoch = {'pretrain': 0, 'controller': 0, 'final': 0}
@@ -233,10 +235,10 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
 
 
     def eval(self, data):
-        if self.finalmodel is None:
-            return self._eval_model(data)
-        else:
-            return self._eval_final(data)
+        accuracy = self._eval_final(data)
+        model_size = self.compute_model_size.compute(self.finalmodel_mask)
+
+        return accuracy, model_size
 
 
     def _eval_model(self, data, masks=None):

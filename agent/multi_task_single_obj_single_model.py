@@ -6,7 +6,7 @@ import json
 import numpy as np
 from model import SimpleModel
 from controller import Controller
-from utils import MaskSampler
+from utils import MaskSampler, SingleModelSize
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 
 
@@ -30,6 +30,8 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
         self.finalmodel = None
 
         self.mask_sampler = MaskSampler(mask_size=self.model.mask_size, controller=self.controller)
+        self.compute_model_size = SingleModelSize(architecture, search_space, task_info.num_channels, sum(task_info.num_classes))
+
         self.model = nn.DataParallel(self.model).to(self.device)
 
         self.epoch = {'pretrain': 0, 'controller': 0, 'final': 0}

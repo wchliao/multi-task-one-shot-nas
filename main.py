@@ -127,9 +127,10 @@ def evaluate(args):
         raise ValueError('Unknown setting: {}'.format(args.type))
 
     agent.load(args.path)
-    accuracy = agent.eval(data)
+    accuracy, model_size = agent.eval(data)
 
     print('Accuracy: {}'.format(accuracy))
+    print('Model size: {}'.format(model_size))
 
 
 def _load_configs():
