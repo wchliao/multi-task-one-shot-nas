@@ -51,8 +51,10 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
         self.controller.train()
 
         optimizer = optim.Adam(self.controller.parameters(), lr=configs.lr)
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=configs.lr_decay_epoch, gamma=configs.lr_decay)
 
         for epoch in range(self.epoch['controller'], configs.num_epochs):
+            scheduler.step()
             for t in range(self.num_tasks):
                 masks, log_probs = self.mask_sampler.sample(task=t)
                 accuracy = self._eval_model(valid_data, masks, t)

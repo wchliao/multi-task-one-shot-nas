@@ -139,8 +139,14 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
         self.controller.train()
 
         optimizer = optim.Adam(self.controller.parameters(), lr=configs.lr)
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=configs.lr_decay_epoch, gamma=configs.lr_decay)
+
+        for epoch in range(self.epoch['controller']):
+            scheduler.step()
 
         for epoch in range(self.epoch['controller'], configs.num_epochs):
+            scheduler.step()
+
             masks, log_probs = self.mask_sampler.sample()
             accuracy = self._eval_model(valid_data, masks)
 
