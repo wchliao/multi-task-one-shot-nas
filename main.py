@@ -1,7 +1,7 @@
 import argparse
 import yaml
 from namedtuple import TaskInfo, DataConfigs, PretrainConfigs, ControllerConfigs, FinalModelConfigs, Configs, LayerArguments, OperationArguments
-from data_loader import CIFAR100Loader
+from data_loader import CIFAR100Loader, OmniglotLoader
 from agent import SingleTaskSingleObjectiveAgent
 from agent import MultiTaskSingleObjectiveSingleModelAgent
 from agent import MultiTaskSingleObjectiveMultiModelAgent
@@ -17,7 +17,8 @@ def parse_args():
     parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n'
                                                             '2: Multi-task single objective single model\n'
                                                             '3: Multi-task single objective multi model')
-    parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100')
+    parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100\n'
+                                                            '2: Omniglot')
     parser.add_argument('--task', type=int, default=None)
 
     parser.add_argument('--save', action='store_true')
@@ -39,6 +40,10 @@ def train(args):
         train_data = CIFAR100Loader(batch_size=configs.data.batch_size, type='train', drop_last=True)
         valid_data = CIFAR100Loader(batch_size=configs.data.batch_size, type='valid', drop_last=False)
         test_data = CIFAR100Loader(batch_size=configs.data.batch_size, type='test', drop_last=False)
+    elif args.data == 2:
+        train_data = OmniglotLoader(batch_size=configs.data.batch_size, type='train', drop_last=True)
+        valid_data = OmniglotLoader(batch_size=configs.data.batch_size, type='valid', drop_last=False)
+        test_data = OmniglotLoader(batch_size=configs.data.batch_size, type='test', drop_last=False)
     else:
         raise ValueError('Unknown data ID: {}'.format(args.data))
 
@@ -94,6 +99,8 @@ def evaluate(args):
 
     if args.data == 1:
         data = CIFAR100Loader(batch_size=configs.data.batch_size, type='test', drop_last=False)
+    elif args.data == 2:
+        data = OmniglotLoader(batch_size=configs.data.batch_size, type='test', drop_last=False)
     else:
         raise ValueError('Unknown data ID: {}'.format(args.data))
 

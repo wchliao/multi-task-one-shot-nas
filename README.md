@@ -20,6 +20,7 @@ Arguments:
    * `3`: Train a multi-task single objective multi model NAS agent.
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
+   * `2`: Omniglot
  * `--task`: Task ID (for type `1`) (default: None) 
  * `--save`: A flag used to decide whether to save model or not.
  * `--save_history`: A flag used to decide whether to save accuracy history or not.
@@ -41,5 +42,6 @@ Arguments:
    * `3`: Evaluate a multi-task single objective multi model NAS agent.
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
+   * `2`: Omniglot
  * `--task`: Task ID (for type `1`) (default: None)
  * `--path`: Path (directory) that model and history are saved. (default: `'saved_models/default/'`)
