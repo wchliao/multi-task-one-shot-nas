@@ -139,10 +139,14 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
             if verbose:
                 print('[Final][Epoch {}] Accuracy: {}'.format(epoch + 1, self.accuracy['final'][-1]))
 
-            if epoch % configs.save_epoch == 0 and save_model:
-                self._save_final(path)
-                self.epoch['final'] = epoch + 1
-                self._save_epoch('final', path)
+            if epoch % configs.save_epoch == 0:
+                if save_model:
+                    self._save_final(path)
+                    self.epoch['final'] = epoch + 1
+                    self._save_epoch('final', path)
+
+                if save_history:
+                    self._save_accuracy('final', path)
 
         if save_model:
             self._save_final(path)
