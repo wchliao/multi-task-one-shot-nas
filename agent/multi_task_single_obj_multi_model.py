@@ -186,18 +186,12 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
 
 
     def _eval_final(self, data, task=None):
-        for model in self.finalmodel:
-            model.eval()
-
         if task is None:
             model = lambda x, t: self.finalmodel[t](x)
             accuracy = self._eval(data, model)
         else:
             model = lambda x: self.finalmodel[task](x)
             accuracy = self._eval_single_task(data.get_loader(task), model)
-
-        for model in self.finalmodel:
-            model.train()
 
         return accuracy
 
