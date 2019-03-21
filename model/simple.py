@@ -4,8 +4,8 @@ from .core import Bottleneck
 
 
 class SimpleModel(BaseModel):
-    def __init__(self, architecture, search_space, in_channels, num_classes):
-        super(SimpleModel, self).__init__(architecture, search_space, in_channels, num_classes)
+    def __init__(self, architecture, search_space, in_channels, num_classes, bn_running_stats=True):
+        super(SimpleModel, self).__init__(architecture, search_space, in_channels, num_classes, bn_running_stats)
 
         self.architecture = architecture
         self.search_size = len(search_space)
@@ -22,7 +22,7 @@ class SimpleModel(BaseModel):
             else:
                 self.must_select.append(False)
 
-            layer_ops = [Bottleneck(in_channels, configs.out_channels, op.kernel_size, op.expansion, configs.stride) for op in search_space]
+            layer_ops = [Bottleneck(in_channels, configs.out_channels, op.kernel_size, op.expansion, configs.stride, bn_running_stats) for op in search_space]
             self.ops.append(nn.ModuleList(layer_ops))
             in_channels = configs.out_channels
 
@@ -32,6 +32,7 @@ class SimpleModel(BaseModel):
 
         self.relu = nn.ReLU6(inplace=True)
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.dropout = nn.Dropout(p=0.2, inplace=True)
         self.fc = nn.ModuleList([nn.Linear(architecture[-1].out_channels, c) for c in num_classes])
 
 
@@ -48,6 +49,7 @@ class SimpleModel(BaseModel):
 
         x = self.relu(x)
         x = self.avg_pool(x)
+        x = self.dropout(x)
 
         x = x.view(x.size(0), -1)
         x = self.fc[task](x)
@@ -73,7 +75,7 @@ class SimpleModel(BaseModel):
         activation = nn.Sequential(
             self.relu,
             self.avg_pool,
-            nn.Dropout(p=0.2, inplace=True)
+            self.dropout
         )
 
         return SubModel(ops, activation, self.fc[task])

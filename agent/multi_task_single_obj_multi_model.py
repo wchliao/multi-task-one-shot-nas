@@ -19,7 +19,8 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
         self.model = SimpleModel(architecture=architecture,
                                  search_space=search_space,
                                  in_channels=task_info.num_channels,
-                                 num_classes=task_info.num_classes
+                                 num_classes=task_info.num_classes,
+                                 bn_running_stats=False
                                  )
         self.submodel = self.model.submodel
 
@@ -186,12 +187,18 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
 
 
     def _eval_final(self, data, task=None):
+        for model in self.finalmodel:
+            model.eval()
+
         if task is None:
             model = lambda x, t: self.finalmodel[t](x)
             accuracy = self._eval(data, model)
         else:
             model = lambda x: self.finalmodel[task](x)
             accuracy = self._eval_single_task(data.get_loader(task), model)
+
+        for model in self.finalmodel:
+            model.train()
 
         return accuracy
 

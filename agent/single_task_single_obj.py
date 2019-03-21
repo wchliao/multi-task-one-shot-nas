@@ -17,7 +17,8 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
         self.model = SimpleModel(architecture=architecture,
                                  search_space=search_space,
                                  in_channels=task_info.num_channels,
-                                 num_classes=[task_info.num_classes]
+                                 num_classes=[task_info.num_classes],
+                                 bn_running_stats=True,
                                  )
         self.submodel = self.model.submodel
 

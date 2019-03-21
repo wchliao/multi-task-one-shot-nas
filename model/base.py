@@ -2,7 +2,7 @@ import torch.nn as nn
 
 
 class BaseModel(nn.Module):
-    def __init__(self, architecture, search_space, in_channels, num_classes):
+    def __init__(self, architecture, search_space, in_channels, num_classes, bn_running_stats=True):
         super(BaseModel, self).__init__()
 
     def forward(self, inputs, masks, task):
