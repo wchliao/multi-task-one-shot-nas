@@ -31,7 +31,7 @@ class MultiTaskSingleObjectiveMultiModelAgent(MultiTaskSingleObjectiveSingleMode
         self.finalmodel = None
 
         self.mask_sampler = MaskSampler(mask_size=self.model.mask_size, controller=self.controller)
-        self.compute_model_size = MultiModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes)
+        self.compute_model_size = MultiModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes, batchnorm=False)
 
         self.model = nn.DataParallel(self.model).to(self.device)
 

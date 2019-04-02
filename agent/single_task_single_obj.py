@@ -29,7 +29,7 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
         self.finalmodel = None
 
         self.mask_sampler = MaskSampler(mask_size=self.model.mask_size, controller=self.controller)
-        self.compute_model_size = SingleModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes)
+        self.compute_model_size = SingleModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes, batchnorm=True)
 
         self.model = nn.DataParallel(self.model).to(self.device)
 

@@ -40,11 +40,12 @@ class MaskSampler:
 
 
 class BaseModelSize:
-    def __init__(self, architecture, search_space, in_channels, num_classes):
+    def __init__(self, architecture, search_space, in_channels, num_classes, batchnorm=True):
         self.in_channels = in_channels
         self.out_channels = [layer.out_channels for layer in architecture]
         self.ops = search_space
         self.num_classes = num_classes
+        self.batchnorm = batchnorm
 
         self.must_select = []
         for layer in architecture:
@@ -73,11 +74,12 @@ class BaseModelSize:
         hidden_channels = operation.expansion * in_channels
 
         size = self._conv_size(in_channels, hidden_channels, 1)
-        size += self._batchnorm_size(hidden_channels)
         size += self._conv_size(hidden_channels, 1, kernel_size)
-        size += self._batchnorm_size(hidden_channels)
         size += self._conv_size(hidden_channels, out_channels, 1)
-        size += self._batchnorm_size(out_channels)
+
+        if self.batchnorm:
+            size += self._batchnorm_size(hidden_channels) * 2
+            size += self._batchnorm_size(out_channels)
 
         return size
 
@@ -87,8 +89,8 @@ class BaseModelSize:
 
 
 class SingleModelSize(BaseModelSize):
-    def __init__(self, architecture, search_space, in_channels, num_classes):
-        super(SingleModelSize, self).__init__(architecture, search_space, in_channels, num_classes)
+    def __init__(self, architecture, search_space, in_channels, num_classes, batchnorm=True):
+        super(SingleModelSize, self).__init__(architecture, search_space, in_channels, num_classes, batchnorm)
 
 
     def compute(self, masks):
@@ -111,8 +113,8 @@ class SingleModelSize(BaseModelSize):
 
 
 class MultiModelSize(BaseModelSize):
-    def __init__(self, architecture, search_space, in_channels, num_classes):
-        super(MultiModelSize, self).__init__(architecture, search_space, in_channels, num_classes)
+    def __init__(self, architecture, search_space, in_channels, num_classes, batchnorm=False):
+        super(MultiModelSize, self).__init__(architecture, search_space, in_channels, num_classes, batchnorm)
         self.num_classes = sum(num_classes)
 
 
