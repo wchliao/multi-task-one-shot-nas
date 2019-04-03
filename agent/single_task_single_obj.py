@@ -361,7 +361,7 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
         try:
             with open(os.path.join(path, 'masks'), 'r') as f:
                 self.finalmodel_mask = json.load(f)
-            self.finalmodel_mask = torch.tensor(self.finalmodel_mask)
+            self.finalmodel_mask = torch.tensor(self.finalmodel_mask, dtype=torch.uint8)
             self.finalmodel = self.submodel(self.finalmodel_mask)
             self.finalmodel = nn.DataParallel(self.finalmodel).to(self.device)
 

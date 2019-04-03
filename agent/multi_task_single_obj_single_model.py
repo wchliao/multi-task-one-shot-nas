@@ -213,7 +213,7 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
         try:
             with open(os.path.join(path, 'masks'), 'r') as f:
                 self.finalmodel_mask = json.load(f)
-            self.finalmodel_mask = torch.tensor(self.finalmodel_mask)
+            self.finalmodel_mask = torch.tensor(self.finalmodel_mask, dtype=torch.uint8)
 
             self.finalmodel = [self.submodel(self.finalmodel_mask, task) for task in range(self.num_tasks)]
             self.finalmodel = [nn.DataParallel(m).to(self.device) for m in self.finalmodel]
