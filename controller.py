@@ -38,7 +38,7 @@ class Controller(nn.Module):
         if sample_best:
             masks = probs.gt(0.5)
         else:
-            masks = dist.sample()
+            masks = dist.sample().type(torch.uint8)
 
         masks_probs = torch.tensor([p if mask else 1 - p for p, mask in zip(probs, masks)])
         log_probs = dist.log_prob(masks_probs)

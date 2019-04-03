@@ -19,7 +19,7 @@ class MaskSampler:
 
 
     def ones(self, batch=True):
-        masks = torch.ones(self.mask_size)
+        masks = torch.ones(self.mask_size, dtype=torch.uint8)
 
         if batch:
             return torch.stack([masks for _ in range(self.device_count)])
@@ -101,7 +101,7 @@ class SingleModelSize(BaseModelSize):
         in_channels = self.in_channels
 
         for out_channels, layer_masks, must_select in zip(self.out_channels, masks, self.must_select):
-            if must_select and layer_masks.sum() == 0:
+            if must_select and not layer_masks.any():
                 layer_masks[0] = 1
             for op, mask in zip(self.ops, layer_masks):
                 if mask:
@@ -123,7 +123,7 @@ class MultiModelSize(BaseModelSize):
         masks = [layer_masks.view(-1, len(self.ops)) for layer_masks in masks]
         for masks_t in masks:
             for layer_masks, must_select in zip(masks_t, self.must_select):
-                if must_select and layer_masks.sum() == 0:
+                if must_select and not layer_masks.any():
                     layer_masks[0] = 1
         masks = sum(masks)
 

@@ -41,9 +41,9 @@ class SimpleModel(BaseModel):
         x = inputs
 
         for layer_ops, layer_masks, must_select in zip(self.ops, masks, self.must_select):
-            if not must_select and layer_masks.sum() == 0:
+            if not must_select and not layer_masks.any():
                 continue
-            if must_select and layer_masks.sum() == 0:
+            if must_select and not layer_masks.any():
                 layer_masks[0] = 1
             x = sum([op(x) for op, mask in zip(layer_ops, layer_masks) if mask])
 
@@ -63,9 +63,9 @@ class SimpleModel(BaseModel):
         ops = []
 
         for layer_ops, layer_masks, must_select in zip(self.ops, masks, self.must_select):
-            if not must_select and sum(layer_masks) == 0:
+            if not must_select and not layer_masks.any():
                 continue
-            if must_select and sum(layer_masks) == 0:
+            if must_select and not layer_masks.any():
                 layer_masks[0] = 1
 
             ops.append(nn.ModuleList([op for op, mask in zip(layer_ops, layer_masks) if mask]))
