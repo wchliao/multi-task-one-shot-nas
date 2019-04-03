@@ -9,7 +9,8 @@ class MaskSampler:
 
 
     def rand(self, batch=True):
-        masks = torch.rand(self.mask_size)
+        probs = torch.rand(self.mask_size)
+        masks = probs.lt(0.5)
 
         if batch:
             return torch.stack([masks for _ in range(self.device_count)])
