@@ -8,9 +8,9 @@ class MaskSampler:
         self.device_count = torch.cuda.device_count()
 
 
-    def rand(self, batch=True):
+    def rand(self, dropout=0.5, batch=True):
         probs = torch.rand(self.mask_size)
-        masks = probs.lt(0.5)
+        masks = probs.gt(dropout)
 
         if batch:
             return torch.stack([masks for _ in range(self.device_count)])

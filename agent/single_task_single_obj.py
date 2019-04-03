@@ -101,7 +101,7 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
 
             for inputs, labels in train_data:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
-                masks = self.mask_sampler.rand().gt(dropout)
+                masks = self.mask_sampler.rand(dropout=dropout)
                 outputs = self.model(inputs, masks)
                 loss = criterion(outputs, labels)
 
