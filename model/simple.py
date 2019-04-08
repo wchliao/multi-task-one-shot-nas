@@ -4,8 +4,8 @@ from .core import Bottleneck
 
 
 class SimpleModel(BaseModel):
-    def __init__(self, architecture, search_space, in_channels, num_classes, bn_running_stats=True):
-        super(SimpleModel, self).__init__(architecture, search_space, in_channels, num_classes, bn_running_stats)
+    def __init__(self, architecture, search_space, in_channels, num_classes):
+        super(SimpleModel, self).__init__(architecture, search_space, in_channels, num_classes)
 
         self.architecture = architecture
         self.search_size = len(search_space)
@@ -22,7 +22,7 @@ class SimpleModel(BaseModel):
             else:
                 self.must_select.append(False)
 
-            layer_ops = [Bottleneck(in_channels, configs.out_channels, op.kernel_size, op.expansion, configs.stride, bn_running_stats) for op in search_space]
+            layer_ops = [Bottleneck(in_channels, configs.out_channels, op.kernel_size, op.expansion, configs.stride, bn_running_stats=True) for op in search_space]
             self.ops.append(nn.ModuleList(layer_ops))
             in_channels = configs.out_channels
 

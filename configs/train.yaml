@@ -11,12 +11,10 @@ pretrain:
   dropout: 0.7
   save_epoch: 30
 
-controller:
+search:
   num_epochs: 100
-  lr: 0.001
-  lr_decay: 0.1
-  lr_decay_epoch: [50]
-  baseline_decay: 0.95
+  num_samples: 32
+  mutate_prob: 0.05
   save_epoch: 100
 
 final:

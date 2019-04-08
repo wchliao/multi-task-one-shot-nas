@@ -16,8 +16,7 @@ Arguments:
 
  * `--type`: (default: `1`)
    * `1`: Train a single task single objective NAS agent for task *i* model.
-   * `2`: Train a multi-task single objective single model NAS agent.
-   * `3`: Train a multi-task single objective multi model NAS agent.
+   * `2`: Train a multi-task single objective NAS agent.
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
    * `2`: Omniglot
@@ -38,8 +37,7 @@ Arguments:
 
  * `--type`: (default: `1`)
    * `1`: Evaluate a single task single objective NAS agent for task *i* model.
-   * `2`: Evaluate a multi-task single objective single model NAS agent.
-   * `3`: Evaluate a multi-task single objective multi model NAS agent.
+   * `2`: Evaluate a multi-task single objective NAS agent.
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
    * `2`: Omniglot

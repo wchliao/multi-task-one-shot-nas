@@ -5,12 +5,11 @@ import os
 import json
 import numpy as np
 from model import SimpleModel
-from controller import Controller
-from utils import MaskSampler, SingleModelSize
+from utils import ModelSize
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 
 
-class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
+class MultiTaskSingleObjectiveAgent(SingleTaskSingleObjectiveAgent):
     def __init__(self, architecture, search_space, task_info):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.search_size = len(search_space)
@@ -19,24 +18,11 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
         self.model = SimpleModel(architecture=architecture,
                                  search_space=search_space,
                                  in_channels=task_info.num_channels,
-                                 num_classes=task_info.num_classes,
-                                 bn_running_stats=True
+                                 num_classes=task_info.num_classes
                                  )
-        self.submodel = self.model.submodel
+        self.compute_model_size = ModelSize(architecture, search_space, task_info.num_channels, sum(task_info.num_classes), batchnorm=True)
 
-        self.controller = Controller(num_outputs=self.model.mask_size)
-        self.baseline = None
-
-        self.finalmodel_mask = None
-        self.finalmodel = None
-
-        self.mask_sampler = MaskSampler(mask_size=self.model.mask_size, controller=self.controller)
-        self.compute_model_size = SingleModelSize(architecture, search_space, task_info.num_channels, sum(task_info.num_classes), batchnorm=True)
-
-        self.model = nn.DataParallel(self.model).to(self.device)
-
-        self.epoch = {'pretrain': 0, 'controller': 0, 'final': 0}
-        self.accuracy = {'pretrain': [], 'controller': [], 'final': []}
+        self._init()
 
 
     def _pretrain(self,
@@ -102,7 +88,7 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
                     ):
 
         if self.finalmodel is None:
-            self.finalmodel_mask, _ = self.mask_sampler.sample(sample_best=True, grad=False, batch=False)
+            self.finalmodel_mask = self.queue[0]
             self.finalmodel = [self.submodel(self.finalmodel_mask, task) for task in range(self.num_tasks)]
             self.finalmodel = [nn.DataParallel(m).to(self.device) for m in self.finalmodel]
 
@@ -158,10 +144,8 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
             self._save_accuracy('final', path)
 
 
-    def _eval_model(self, data, masks=None):
-        if masks is None:
-            masks, _ = self.mask_sampler.sample(sample_best=True, grad=False)
-
+    def _eval_model(self, data, masks):
+        masks = self.mask_sampler.make_batch(masks)
         model = lambda x, t: self.model(x, masks, t)
         accuracy = self._eval(data, model)
 
@@ -202,7 +186,7 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
         if not os.path.isdir(path):
             os.makedirs(path)
 
-        with open(os.path.join(path, 'masks'), 'w') as f:
+        with open(os.path.join(path, 'masks.json'), 'w') as f:
             json.dump(self.finalmodel_mask.tolist(), f)
 
         for t, model in enumerate(self.finalmodel):
@@ -211,7 +195,7 @@ class MultiTaskSingleObjectiveSingleModelAgent(SingleTaskSingleObjectiveAgent):
 
     def _load_final(self, path='saved_models/default/final/'):
         try:
-            with open(os.path.join(path, 'masks'), 'r') as f:
+            with open(os.path.join(path, 'masks.json'), 'r') as f:
                 self.finalmodel_mask = json.load(f)
             self.finalmodel_mask = torch.tensor(self.finalmodel_mask, dtype=torch.uint8)
 

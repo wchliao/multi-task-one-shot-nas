@@ -9,9 +9,9 @@ with open('configs/train.yaml', 'r') as f:
 
 DataConfigs = namedtuple('DataConfigs', _configs['data'].keys())
 PretrainConfigs = namedtuple('PretrainConfigs', _configs['pretrain'].keys())
-ControllerConfigs = namedtuple('ControllerConfigs', _configs['controller'].keys())
+SearchConfigs = namedtuple('SearchConfigs', _configs['search'].keys())
 FinalModelConfigs = namedtuple('FinalModelConfigs', _configs['final'].keys())
-Configs = namedtuple('Configs', ['data', 'pretrain', 'controller', 'final'])
+Configs = namedtuple('Configs', ['data', 'pretrain', 'search', 'final'])
 
 with open('configs/architecture.yaml', 'r') as f:
     _configs = yaml.load(f)

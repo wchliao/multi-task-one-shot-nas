@@ -1,10 +1,9 @@
 import argparse
 import yaml
-from namedtuple import TaskInfo, DataConfigs, PretrainConfigs, ControllerConfigs, FinalModelConfigs, Configs, LayerArguments, OperationArguments
+from namedtuple import TaskInfo, DataConfigs, PretrainConfigs, SearchConfigs, FinalModelConfigs, Configs, LayerArguments, OperationArguments
 from data_loader import CIFAR100Loader, OmniglotLoader
 from agent import SingleTaskSingleObjectiveAgent
-from agent import MultiTaskSingleObjectiveSingleModelAgent
-from agent import MultiTaskSingleObjectiveMultiModelAgent
+from agent import MultiTaskSingleObjectiveAgent
 
 
 def parse_args():
@@ -15,8 +14,7 @@ def parse_args():
     mode.add_argument('--eval', action='store_true')
 
     parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n'
-                                                            '2: Multi-task single objective single model\n'
-                                                            '3: Multi-task single objective multi model')
+                                                            '2: Multi-task single objective')
     parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100\n'
                                                             '2: Omniglot')
     parser.add_argument('--task', type=int, default=None)
@@ -72,9 +70,7 @@ def train(args):
     if args.type == 1:
         agent = SingleTaskSingleObjectiveAgent(architecture, search_space, task_info)
     elif args.type == 2:
-        agent = MultiTaskSingleObjectiveSingleModelAgent(architecture, search_space, task_info)
-    elif args.type == 3:
-        agent = MultiTaskSingleObjectiveMultiModelAgent(architecture, search_space, task_info)
+        agent = MultiTaskSingleObjectiveAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 
@@ -127,9 +123,7 @@ def evaluate(args):
     if args.type == 1:
         agent = SingleTaskSingleObjectiveAgent(architecture, search_space, task_info)
     elif args.type == 2:
-        agent = MultiTaskSingleObjectiveSingleModelAgent(architecture, search_space, task_info)
-    elif args.type == 3:
-        agent = MultiTaskSingleObjectiveMultiModelAgent(architecture, search_space, task_info)
+        agent = MultiTaskSingleObjectiveAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 
@@ -146,10 +140,10 @@ def _load_configs():
 
     data_configs = DataConfigs(**configs['data'])
     pretrain_configs = PretrainConfigs(**configs['pretrain'])
-    controller_configs = ControllerConfigs(**configs['controller'])
+    search_configs = SearchConfigs(**configs['search'])
     final_configs = FinalModelConfigs(**configs['final'])
 
-    return Configs(data=data_configs, pretrain=pretrain_configs, controller=controller_configs, final=final_configs)
+    return Configs(data=data_configs, pretrain=pretrain_configs, search=search_configs, final=final_configs)
 
 
 def _load_architecture():
