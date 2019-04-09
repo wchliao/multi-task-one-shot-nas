@@ -52,7 +52,7 @@ class MultiTaskSingleObjectiveAgent(SingleTaskSingleObjectiveAgent):
             for inputs, labels, task in dataloader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 masks = self.mask_sampler.rand(dropout=dropout)
-                outputs = self.model(inputs, masks, task)
+                outputs = self.model(inputs, self.mask_sampler.make_batch(masks), task)
                 loss = criterion(outputs, labels)
 
                 optimizer.zero_grad()
