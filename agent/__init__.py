@@ -1,2 +1,3 @@
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 from .multi_task_single_obj import MultiTaskSingleObjectiveAgent
+from .single_task_multi_obj import SingleTaskMultiObjectiveAgent
