@@ -22,7 +22,6 @@ Arguments:
    * `1`: CIFAR-100
    * `2`: Omniglot
  * `--task`: Task ID (for type `1`) (default: None)
- * `--id`: Train *id* final model found in search phase. (default: None)
  * `--save`: A flag used to decide whether to save model or not.
  * `--save_history`: A flag used to decide whether to save accuracy history or not.
  * `--load`: Load a pre-trained model before training.
