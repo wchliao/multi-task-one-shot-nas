@@ -6,6 +6,7 @@ from data_loader import CIFAR100Loader, OmniglotLoader
 from agent import SingleTaskSingleObjectiveAgent
 from agent import MultiTaskSingleObjectiveAgent
 from agent import SingleTaskMultiObjectiveAgent
+from agent import MultiTaskMultiObjectiveAgent
 
 
 def parse_args():
@@ -18,7 +19,8 @@ def parse_args():
 
     parser.add_argument('--type', type=int, default=1, help='1: Single task single objective\n'
                                                             '2: Multi task single objective\n'
-                                                            '3: Single task multi objective')
+                                                            '3: Single task multi objective\n'
+                                                            '4: Multi task multi objective')
     parser.add_argument('--data', type=int, default=1, help='1: CIFAR-100\n'
                                                             '2: Omniglot')
     parser.add_argument('--task', type=int, default=None)
@@ -78,6 +80,8 @@ def train(args):
         agent = MultiTaskSingleObjectiveAgent(architecture, search_space, task_info)
     elif args.type == 3:
         agent = SingleTaskMultiObjectiveAgent(architecture, search_space, task_info)
+    elif args.type == 4:
+        agent = MultiTaskMultiObjectiveAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 
@@ -133,6 +137,8 @@ def evaluate(args):
         agent = MultiTaskSingleObjectiveAgent(architecture, search_space, task_info)
     elif args.type == 3:
         agent = SingleTaskMultiObjectiveAgent(architecture, search_space, task_info)
+    elif args.type == 4:
+        agent = MultiTaskMultiObjectiveAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 
@@ -180,6 +186,8 @@ def finaltrain(args):
 
     if args.type == 3:
         agent = SingleTaskMultiObjectiveAgent(architecture, search_space, task_info)
+    elif args.type == 4:
+        agent = MultiTaskMultiObjectiveAgent(architecture, search_space, task_info)
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 

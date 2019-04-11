@@ -111,22 +111,25 @@ class SingleTaskMultiObjectiveAgent(SingleTaskSingleObjectiveAgent, BaseMultiObj
             if verbose:
                 print('[Search][Epoch {}]'.format(epoch + 1))
 
-            if epoch % configs.save_epoch == 0:
-                if save_model:
-                    self._save_search(path)
-                    self.epoch['search'] = epoch + 1
-                    self._save_epoch('search', path)
+            if epoch % configs.save_epoch == 0 and save_model:
+                self._find_pareto_front()
+                self._save_search(path)
+                self.epoch['search'] = epoch + 1
+                self._save_epoch('search', path)
 
+        if save_model:
+            self._find_pareto_front()
+            self._save_search(path)
+            self.epoch['search'] = configs.num_epochs
+            self._save_epoch('search', path)
+
+
+    def _find_pareto_front(self):
         self.pareto_front_obj, order = pareto_front(self.queue_obj)
         self.pareto_front = [self.queue[i] for i in order]
         order = np.argsort([obj[0] for obj in self.pareto_front_obj])[::-1]
         self.pareto_front = [self.pareto_front[i] for i in order]
         self.pareto_front_obj = [self.pareto_front_obj[i] for i in order]
-
-        if save_model:
-            self._save_search(path)
-            self.epoch['search'] = configs.num_epochs
-            self._save_epoch('search', path)
 
 
     def finaltrain(self,

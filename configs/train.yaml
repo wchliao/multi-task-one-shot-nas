@@ -13,9 +13,9 @@ pretrain:
 
 search:
   num_epochs: 100
-  num_samples: 32
+  num_samples: 64
   mutate_prob: 0.05
-  save_epoch: 100
+  save_epoch: 5
 
 final:
   num_epochs: 300
