@@ -113,6 +113,7 @@ class ModelSize:
 
 
     def compute(self, masks):
+        masks = masks.clone()
         masks = masks.view(-1, len(self.ops))
 
         size = 0
