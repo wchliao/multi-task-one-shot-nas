@@ -14,11 +14,12 @@ python main.py --train
 
 Arguments:
 
- * `--type`: (default: `1`)
+ * `--type`: (default: `5`)
    * `1`: Train a single task single objective NAS agent for task *i* model.
    * `2`: Train a multi-task single objective NAS agent.
    * `3`: Train a single task multi-objective NAS agent for task *i* model.
    * `4`: Train a multi-task multi-objective NAS agent.
+   * `5`: Train a multi-task multi-objective NAS agent which can freely decide whether to use shared or non-shared components. (WSNAS)
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
    * `2`: Omniglot
@@ -37,11 +38,12 @@ python main.py --eval
 
 Arguments:
 
- * `--type`: (default: `1`)
+ * `--type`: (default: `5`)
    * `1`: Evaluate a single task single objective NAS agent for task *i* model.
    * `2`: Evaluate a multi-task single objective NAS agent.
    * `3`: Evaluate a single task multi-objective NAS agent for task *i* model.
    * `4`: Evaluate a multi-task multi-objective NAS agent.
+   * `5`: Evaluate a multi-task multi-objective NAS agent which can freely decide whether to use shared or non-shared components. (WSNAS)
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
    * `2`: Omniglot
@@ -57,9 +59,10 @@ python main.py --final
 
 Arguments:
 
- * `--type`: (default: `1`)
+ * `--type`: (default: `5`)
    * `3`: Train a single task multi-objective NAS agent for task *i* model.
    * `4`: Train a multi-task multi-objective NAS agent.
+   * `5`: Train a multi-task multi-objective NAS agent which can freely decide whether to use shared or non-shared components. (WSNAS)
  * `--data`: (default: `1`)
    * `1`: CIFAR-100
    * `2`: Omniglot

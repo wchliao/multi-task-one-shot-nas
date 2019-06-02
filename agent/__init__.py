@@ -2,3 +2,4 @@ from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 from .multi_task_single_obj import MultiTaskSingleObjectiveAgent
 from .single_task_multi_obj import SingleTaskMultiObjectiveAgent
 from .multi_task_multi_obj import MultiTaskMultiObjectiveAgent
+from .wsnas import WSNASAgent

@@ -5,7 +5,7 @@ import os
 import json
 import numpy as np
 from model import SimpleModel
-from utils import MaskSampler, masks2str, ModelSize
+from utils import MaskSampler, masks2str, SimpleModelSize
 from .base import BaseAgent
 
 
@@ -19,7 +19,7 @@ class SingleTaskSingleObjectiveAgent(BaseAgent):
                                  in_channels=task_info.num_channels,
                                  num_classes=[task_info.num_classes]
                                  )
-        self.compute_model_size = ModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes, batchnorm=True)
+        self.compute_model_size = SimpleModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes, batchnorm=True)
 
         self._init()
 

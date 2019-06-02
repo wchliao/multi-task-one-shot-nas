@@ -94,7 +94,7 @@ def _fc_size(in_dims, out_dims):
     return in_dims * out_dims + out_dims
 
 
-class ModelSize:
+class SimpleModelSize:
     def __init__(self, architecture, search_space, in_channels, num_classes, batchnorm=True):
         self.in_channels = in_channels
         self.out_channels = [layer.out_channels for layer in architecture]
@@ -125,6 +125,52 @@ class ModelSize:
             for op, mask in zip(self.ops, layer_masks):
                 if mask:
                     size += _operation_size(in_channels, out_channels, op)
+            in_channels = out_channels
+
+        size += _fc_size(in_channels, self.num_classes)
+
+        return size
+
+
+class ComplexModelSize:
+    def __init__(self, architecture, search_space, in_channels, num_classes):
+        self.in_channels = in_channels
+        self.out_channels = [layer.out_channels for layer in architecture]
+        self.ops = search_space
+        self.num_classes = sum(num_classes)
+
+        self.must_select = []
+        for layer in architecture:
+            if in_channels != layer.out_channels or layer.stride > 1:
+                self.must_select.append(True)
+            else:
+                self.must_select.append(False)
+
+            in_channels = layer.out_channels
+
+
+    def compute(self, shared_masks, tasks_masks):
+        shared_masks = shared_masks.clone()
+        shared_masks = shared_masks.view(-1, len(self.ops))
+        tasks_masks = [m.view(-1, len(self.ops)) for m in tasks_masks]
+        tasks_masks = [layer_masks for layer_masks in zip(*tasks_masks)]
+
+        size = 0
+        in_channels = self.in_channels
+
+        for out_channels, layer_shared_masks, layer_tasks_masks, must_select in zip(self.out_channels, shared_masks, tasks_masks, self.must_select):
+            if must_select and not layer_shared_masks.any() and not sum(layer_tasks_masks).any():
+                layer_shared_masks[0] = 1
+
+            for op, mask in zip(self.ops, layer_shared_masks):
+                if mask:
+                    size += _operation_size(in_channels, out_channels, op)
+
+            for layer_task_masks in layer_tasks_masks:
+                for op, mask in zip(self.ops, layer_task_masks):
+                    if mask:
+                        size += _operation_size(in_channels, out_channels, op)
+
             in_channels = out_channels
 
         size += _fc_size(in_channels, self.num_classes)
@@ -163,8 +209,8 @@ def _pareto_front(points):
             points.remove(p)
             dominated_points.add(p)
 
-    pareto_points = [tuple(p) for p in pareto_points]
-    dominated_points = [tuple(p) for p in dominated_points]
+    pareto_points = [p for p in pareto_points]
+    dominated_points = [p for p in dominated_points]
 
     return pareto_points, dominated_points
 

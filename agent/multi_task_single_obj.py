@@ -5,7 +5,7 @@ import os
 import json
 import numpy as np
 from model import SimpleModel
-from utils import ModelSize
+from utils import SimpleModelSize
 from .single_task_single_obj import SingleTaskSingleObjectiveAgent
 
 
@@ -20,7 +20,7 @@ class MultiTaskSingleObjectiveAgent(SingleTaskSingleObjectiveAgent):
                                  in_channels=task_info.num_channels,
                                  num_classes=task_info.num_classes
                                  )
-        self.compute_model_size = ModelSize(architecture, search_space, task_info.num_channels, sum(task_info.num_classes), batchnorm=True)
+        self.compute_model_size = SimpleModelSize(architecture, search_space, task_info.num_channels, sum(task_info.num_classes), batchnorm=True)
 
         self._init()
 
