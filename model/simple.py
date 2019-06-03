@@ -37,6 +37,7 @@ class SimpleModel(BaseModel):
 
 
     def forward(self, inputs, masks, task=0):
+        masks = masks.clone()
         masks = masks.view(-1, self.search_size)
         x = inputs
 
@@ -58,6 +59,7 @@ class SimpleModel(BaseModel):
 
 
     def submodel(self, masks, task=0):
+        masks = masks.clone()
         masks = masks.view(-1, self.search_size)
 
         ops = []

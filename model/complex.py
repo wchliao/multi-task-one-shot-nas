@@ -46,6 +46,7 @@ class ComplexModel(nn.Module):
 
 
     def forward(self, inputs, shared_masks, task_masks, task=0):
+        shared_masks = shared_masks.clone()
         shared_masks = shared_masks.view(-1, self.search_size)
         task_masks = task_masks.view(-1, self.search_size)
         x = inputs
@@ -68,6 +69,7 @@ class ComplexModel(nn.Module):
 
 
     def submodel(self, shared_masks, task_masks, task=0):
+        shared_masks = shared_masks.clone()
         shared_masks = shared_masks.view(-1, self.search_size)
         task_masks = task_masks.view(-1, self.search_size)
 
