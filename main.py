@@ -199,7 +199,7 @@ def finaltrain(args):
     else:
         raise ValueError('Unknown setting: {}'.format(args.type))
 
-    agent.load(args.path)
+    agent.load(args.path, id=args.id)
     agent.finaltrain(train_data=train_data,
                      test_data=test_data,
                      configs=configs.final,
