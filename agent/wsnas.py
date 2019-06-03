@@ -26,6 +26,7 @@ class WSNASAgent(BaseMultiObjectiveAgent):
         self.compute_model_size = ComplexModelSize(architecture, search_space, task_info.num_channels, task_info.num_classes)
 
         self.submodel = self.model.submodel
+        self.correct_shared_masks = self.model.correct_shared_masks
         self.mask_sampler = MaskSampler(mask_size=self.model.mask_size)
         self.model = nn.DataParallel(self.model).to(self.device)
 
@@ -210,6 +211,8 @@ class WSNASAgent(BaseMultiObjectiveAgent):
 
         if self.finalmodel is None:
             self.finalmodel_mask = self.pareto_front[id]
+            shared_masks = self.correct_shared_masks(self.finalmodel_mask[0], self.finalmodel_mask[1])
+            self.finalmodel_mask = (shared_masks, self.finalmodel_mask[1])
             self.finalmodel = [self.submodel(self.finalmodel_mask[0], self.finalmodel_mask[1][task], task) for task in range(self.num_tasks)]
             self.finalmodel = [nn.DataParallel(m).to(self.device) for m in self.finalmodel]
 
@@ -276,6 +279,7 @@ class WSNASAgent(BaseMultiObjectiveAgent):
 
 
     def _eval_model(self, data, shared_masks, tasks_masks):
+        shared_masks = self.correct_shared_masks(shared_masks, tasks_masks)
         shared_masks = self.mask_sampler.make_batch(shared_masks)
         tasks_masks = [self.mask_sampler.make_batch(m) for m in tasks_masks]
         model = lambda x, t: self.model(x, shared_masks, tasks_masks[t], t)
@@ -424,6 +428,8 @@ class WSNASAgent(BaseMultiObjectiveAgent):
             with open(os.path.join(path, 'masks.json'), 'r') as f:
                 self.finalmodel_mask = json.load(f)
             self.finalmodel_mask = [torch.tensor(self.finalmodel_mask[0], dtype=torch.uint8), [torch.tensor(m, dtype=torch.uint8) for m in self.finalmodel_mask[1]]]
+            shared_masks = self.correct_shared_masks(self.finalmodel_mask[0], self.finalmodel_mask[1])
+            self.finalmodel_mask = (shared_masks, self.finalmodel_mask[1])
             self.finalmodel = [self.submodel(self.finalmodel_mask[0], self.finalmodel_mask[1][task], task) for task in range(self.num_tasks)]
             self.finalmodel = [nn.DataParallel(m).to(self.device) for m in self.finalmodel]
 

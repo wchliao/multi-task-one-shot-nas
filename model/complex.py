@@ -94,6 +94,21 @@ class ComplexModel(nn.Module):
         return SubModel(ops, activation, self.fc[task])
 
 
+    def correct_shared_masks(self, shared_masks, tasks_masks):
+        shared_masks = shared_masks.clone()
+        shared_masks = shared_masks.view(-1, self.search_size)
+        tasks_masks = [m.view(-1, self.search_size) for m in tasks_masks]
+
+        for task, task_masks in enumerate(tasks_masks):
+            for layer_shared_ops, layer_task_ops, layer_shared_masks, layer_task_masks, must_select in zip(self.ops[-1], self.ops[task], shared_masks, task_masks, self.must_select):
+                if not must_select and not layer_shared_masks.any() and not layer_task_masks.any():
+                    continue
+                if must_select and not layer_shared_masks.any() and not layer_task_masks.any():
+                    layer_shared_masks[0] = 1
+
+        return shared_masks
+
+
     @property
     def mask_size(self):
         return self.num_layers * self.search_size
