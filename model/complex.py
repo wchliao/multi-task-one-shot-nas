@@ -15,12 +15,15 @@ class ComplexModel(nn.Module):
         # Operations
 
         self.must_select = []
+        in_channels_ = in_channels
 
         for configs in architecture:
-            if in_channels != configs.out_channels or configs.stride > 1:
+            if in_channels_ != configs.out_channels or configs.stride > 1:
                 self.must_select.append(True)
             else:
                 self.must_select.append(False)
+
+            in_channels_ = configs.out_channels
 
         self.ops = []
 
